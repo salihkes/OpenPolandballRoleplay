@@ -60,8 +60,7 @@ func _ready():
 	if s1sd.get("mapload"):
 		map_value = s1sd.get("mapload")
 		_load_map()
-	else:
-		_show_login_ui()
+	_show_login_ui()
 
 # Resouce Functions, you can use them as you need them.
 
@@ -104,7 +103,7 @@ func connect_to_server():
 	websocket_client.connect("data_received", self, "_on_websocket_data_received")
 	websocket_client.connect("connection_closed", self, "_on_websocket_disconnected")
 	websocket_client.verify_ssl = false
-	websocket_client.connect_to_url("wss://yourdomain.com:8765")  # Please change this
+	websocket_client.connect_to_url("wss://skeskin.com:8765")  # Please change this
 
 func _position_occupied(position: Vector3) -> bool:
 	for child in workspace.get_children():
@@ -309,6 +308,7 @@ func _handle_flag_update(data):
 # Map and File Functions
 
 func _load_map():
+	get_node("Workspace/StaticBody").queue_free()
 	print("Loading map")
 	var pck_path = "user://" + map_value + ".pck"
 	var tscn_path = "res://DynamicMaps/" + map_value + "/Main.tscn"
@@ -325,7 +325,6 @@ func _load_map():
 				print("Failed to load scene at %s" % tscn_path)
 		else:
 			print("Failed to load resource pack: %s" % pck_path)
-		connect_to_server()
 	else:
 		print("Request taken")
 		var http_request = HTTPRequest.new()

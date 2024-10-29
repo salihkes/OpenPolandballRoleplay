@@ -36,8 +36,28 @@ This version seeks to become a free and open-source alternative of traditional P
 ## 🚀 Getting Started
 
 ### Important Notes
-- **Code Structure**: IMPORTANT: Code is currently unstructured. It was originally written in 2021, then rewritten in 2022 in C#, then modified with LLM, then translated back into GDScript in 2023 and "simplified" (not really) in 2024. A specific convention and style will be followed and the code will be modified for it soon.
-- **Map Availability**: An in-game map (except a baseplate) is not provided at the present. The script before the simplification supported custom maps loaded at runtime, but I may have removed this feature. Will soon be added back during code restructuring.
+
+- **Code Structure**
+  - Current codebase is undergoing restructuring
+  - Development history:
+    - 2021: Original version in GDScript
+    - 2022: Rewritten in C#
+    - 2023: Translated back to GDScript
+    - 2024: Simplified (pending proper restructuring)
+  - A formal code convention will be implemented soon
+
+- **Map System**
+  - Default map is a basic baseplate
+  - Custom maps must be provided as .pck files
+  - Map configuration:
+    1. Place .pck file in user:// directory
+       - macOS: `/Users/yourusername/Library/Application Support/OpenPBRP`
+    2. Modify "mapload" in s1sd.gd to reference your map file
+    3. Map structure must follow:
+       - `res://DynamicMaps/[map_name]/Main.tscn`
+       - `[map_name]` must match .pck filename (no spaces/special chars)
+
+The previus versions allowed dynamic map loading via a graphical UI, but it was removed temporarily for ease of use and ease of development.
 
 ### Prerequisites
 - Godot Engine 3.x
