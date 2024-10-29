@@ -103,7 +103,7 @@ func connect_to_server():
 	websocket_client.connect("data_received", self, "_on_websocket_data_received")
 	websocket_client.connect("connection_closed", self, "_on_websocket_disconnected")
 	websocket_client.verify_ssl = false
-	websocket_client.connect_to_url("wss://skeskin.com:8765")  # Please change this
+	websocket_client.connect_to_url("wss://yourdomain.com:8765")  # Please change this
 
 func _position_occupied(position: Vector3) -> bool:
 	for child in workspace.get_children():
