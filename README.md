@@ -1,6 +1,6 @@
 # OpenPolandballRoleplay
 
-![Game Logo](src/texture/PBRPLogo.png)
+![Game Logo](OpenPolandballRoleplayClient/src/texture/PBRP.png)
 
 A multiplayer social game inspired by Club Penguin, but with Countryballs! Built with Godot Engine.
 
