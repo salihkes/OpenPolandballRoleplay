@@ -776,7 +776,7 @@ func _on_RegisterButton_pressed():
 		websocket_client.connect("data_received", self, "_on_register_websocket_data_received")
 		websocket_client.connect("connection_closed", self, "_on_register_websocket_disconnected")
 		websocket_client.verify_ssl = false
-		websocket_client.connect_to_url("wss://skeskin.com:8765")  # Use same URL as login
+		websocket_client.connect_to_url("wss://yourdomain.com:8765")  # Use same URL as login
 	else:
 		# Show an error message if fields are empty
 		print("Please fill in all required fields")
