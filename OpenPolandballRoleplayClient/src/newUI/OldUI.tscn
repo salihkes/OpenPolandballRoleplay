@@ -1,0 +1,749 @@
+[gd_scene load_steps=17 format=2]
+
+[ext_resource path="res://fonts/BoldStandart.tres" type="DynamicFont" id=1]
+[ext_resource path="res://fonts/regularStandard.tres" type="DynamicFont" id=2]
+[ext_resource path="res://salih1Blox/Element.tres" type="StyleBox" id=3]
+[ext_resource path="res://fonts/LiberationSans-Regular.ttf" type="DynamicFontData" id=4]
+[ext_resource path="res://fonts/LiberationSans-BoldItalic.ttf" type="DynamicFontData" id=5]
+[ext_resource path="res://salih1Blox/PlayerList.gd" type="Script" id=6]
+[ext_resource path="res://salih1Blox/assets/Part.tscn" type="PackedScene" id=7]
+[ext_resource path="res://salih1Blox/PlacementTool.gd" type="Script" id=8]
+[ext_resource path="res://texture/colorrect.png" type="Texture" id=9]
+[ext_resource path="res://sound/clone.ogg" type="AudioStream" id=10]
+
+[sub_resource type="DynamicFont" id=65]
+font_data = ExtResource( 5 )
+
+[sub_resource type="StyleBoxEmpty" id=63]
+
+[sub_resource type="StyleBoxEmpty" id=64]
+
+[sub_resource type="DynamicFont" id=72]
+size = 24
+font_data = ExtResource( 4 )
+
+[sub_resource type="DynamicFont" id=73]
+size = 22
+font_data = ExtResource( 4 )
+
+[sub_resource type="StyleBoxFlat" id=49]
+bg_color = Color( 0, 0, 0, 1 )
+
+[node name="OldUI" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 25.0
+mouse_filter = 2
+
+[node name="ColorRect2" type="ColorRect" parent="."]
+anchor_top = -0.034
+anchor_right = 1.0
+anchor_bottom = -0.034
+margin_top = 0.262001
+margin_bottom = 24.262
+color = Color( 0.501961, 0.501961, 0.501961, 0.501961 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ColorRect2"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Button" type="Button" parent="ColorRect2/HBoxContainer"]
+margin_right = 155.0
+margin_bottom = 23.0
+rect_min_size = Vector2( 155, 0 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 65 )
+custom_styles/hover = SubResource( 63 )
+custom_styles/pressed = SubResource( 63 )
+custom_styles/focus = SubResource( 63 )
+custom_styles/disabled = SubResource( 63 )
+custom_styles/normal = SubResource( 64 )
+text = "Save"
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchor_right = 0.216
+anchor_bottom = 0.219
+margin_left = 11.0
+margin_top = 8.0
+margin_right = 209.816
+margin_bottom = 159.808
+mouse_filter = 2
+color = Color( 0.501961, 0.501961, 0.501961, 0.501961 )
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ColorRect"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 420, 320 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ColorRect/ScrollContainer"]
+margin_right = 420.0
+margin_bottom = 320.0
+rect_min_size = Vector2( 420, 320 )
+
+[node name="ExampleLabel" type="Label" parent="ColorRect/ScrollContainer/VBoxContainer"]
+visible = false
+margin_right = 420.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 100, 32 )
+custom_fonts/font = ExtResource( 2 )
+text = "Username: Hello World!"
+valign = 1
+autowrap = true
+
+[node name="ColorRect3" type="ColorRect" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -217.0
+margin_top = 8.0
+margin_right = -10.0
+margin_bottom = 119.0
+mouse_filter = 2
+color = Color( 0.501961, 0.501961, 0.501961, 0.501961 )
+
+[node name="Players" type="Label" parent="ColorRect3"]
+anchor_right = 1.0
+margin_bottom = 19.0
+rect_min_size = Vector2( 100, 32 )
+custom_fonts/font = SubResource( 72 )
+text = "Player List"
+valign = 1
+autowrap = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ColorRect3"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 32.0
+rect_min_size = Vector2( 207, 70 )
+script = ExtResource( 6 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ColorRect3/ScrollContainer"]
+margin_right = 100.0
+margin_bottom = 32.0
+
+[node name="ExampleLabel" type="Label" parent="ColorRect3/ScrollContainer/VBoxContainer"]
+margin_right = 100.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 100, 32 )
+custom_fonts/font = SubResource( 73 )
+text = "Player1"
+valign = 1
+autowrap = true
+
+[node name="LineEdit" type="LineEdit" parent="."]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -24.0
+custom_fonts/font = ExtResource( 2 )
+custom_styles/normal = SubResource( 49 )
+placeholder_text = "Press / to send your message!"
+
+[node name="Backpack" type="HBoxContainer" parent="."]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -152.0
+margin_bottom = -24.0
+
+[node name="BuildTools" type="Button" parent="Backpack"]
+margin_right = 128.0
+margin_bottom = 128.0
+rect_min_size = Vector2( 128, 128 )
+custom_styles/normal = ExtResource( 3 )
+script = ExtResource( 8 )
+part_scene = ExtResource( 7 )
+
+[node name="ExampleLabel" type="Label" parent="Backpack/BuildTools"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -64.0
+margin_top = -64.0
+margin_right = 64.0
+margin_bottom = 64.0
+rect_min_size = Vector2( 32, 32 )
+custom_fonts/font = ExtResource( 2 )
+text = "Building Tools"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="ColorRect3" type="ColorRect" parent="Backpack/BuildTools"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -32.0
+margin_right = 32.0
+color = Color( 0.501961, 0.501961, 0.501961, 1 )
+
+[node name="ExampleLabel" type="Label" parent="Backpack/BuildTools/ColorRect3"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 32, 32 )
+custom_fonts/font = ExtResource( 1 )
+text = "1"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="ColorRect4" type="ColorRect" parent="Backpack/BuildTools"]
+visible = false
+anchor_left = 7.828
+anchor_top = 1.0
+anchor_right = 7.828
+anchor_bottom = 1.0
+margin_left = -228.984
+margin_top = -257.0
+margin_right = 0.0158081
+margin_bottom = -26.0
+color = Color( 0.501961, 0.501961, 0.501961, 1 )
+
+[node name="GridContainer" type="GridContainer" parent="Backpack/BuildTools/ColorRect4"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -110.0
+margin_top = -110.0
+margin_right = 110.0
+margin_bottom = 110.0
+columns = 8
+
+[node name="TextureButton" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.643137, 0.741176, 0.278431, 1 )
+margin_right = 24.0
+margin_bottom = 24.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton2" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.960784, 0.803922, 0.188235, 1 )
+margin_left = 28.0
+margin_right = 52.0
+margin_bottom = 24.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton3" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.854902, 0.521569, 0.254902, 1 )
+margin_left = 56.0
+margin_right = 80.0
+margin_bottom = 24.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton4" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.768627, 0.156863, 0.109804, 1 )
+margin_left = 84.0
+margin_right = 108.0
+margin_bottom = 24.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton5" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.419608, 0.196078, 0.486275, 1 )
+margin_left = 112.0
+margin_right = 136.0
+margin_bottom = 24.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton6" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.0509804, 0.411765, 0.67451, 1 )
+margin_left = 140.0
+margin_right = 164.0
+margin_bottom = 24.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton7" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0, 0.560784, 0.611765, 1 )
+margin_left = 168.0
+margin_right = 192.0
+margin_bottom = 24.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton8" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.294118, 0.592157, 0.294118, 1 )
+margin_left = 196.0
+margin_right = 220.0
+margin_bottom = 24.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton9" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.972549, 0.972549, 0.972549, 1 )
+margin_top = 28.0
+margin_right = 24.0
+margin_bottom = 52.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton10" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.94902, 0.952941, 0.952941, 1 )
+margin_left = 28.0
+margin_top = 28.0
+margin_right = 52.0
+margin_bottom = 52.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton11" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.898039, 0.894118, 0.87451, 1 )
+margin_left = 56.0
+margin_top = 28.0
+margin_right = 80.0
+margin_bottom = 52.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton12" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.803922, 0.803922, 0.803922, 1 )
+margin_left = 84.0
+margin_top = 28.0
+margin_right = 108.0
+margin_bottom = 52.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton13" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.639216, 0.635294, 0.647059, 1 )
+margin_left = 112.0
+margin_top = 28.0
+margin_right = 136.0
+margin_bottom = 52.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton14" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.388235, 0.372549, 0.384314, 1 )
+margin_left = 140.0
+margin_top = 28.0
+margin_right = 164.0
+margin_bottom = 52.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton15" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.105882, 0.164706, 0.207843, 1 )
+margin_left = 168.0
+margin_top = 28.0
+margin_right = 192.0
+margin_bottom = 52.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton16" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.0666667, 0.0666667, 0.0666667, 1 )
+margin_left = 196.0
+margin_top = 28.0
+margin_right = 220.0
+margin_bottom = 52.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton17" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.498039, 0.556863, 0.392157, 1 )
+margin_top = 56.0
+margin_right = 24.0
+margin_bottom = 80.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton18" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.886275, 0.607843, 0.25098, 1 )
+margin_left = 28.0
+margin_top = 56.0
+margin_right = 52.0
+margin_bottom = 80.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton19" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.917647, 0.721569, 0.572549, 1 )
+margin_left = 56.0
+margin_top = 56.0
+margin_right = 80.0
+margin_bottom = 80.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton20" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.584314, 0.47451, 0.466667, 1 )
+margin_left = 84.0
+margin_top = 56.0
+margin_right = 108.0
+margin_bottom = 80.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton21" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.54902, 0.356863, 0.623529, 1 )
+margin_left = 112.0
+margin_top = 56.0
+margin_right = 136.0
+margin_bottom = 80.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton22" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.454902, 0.52549, 0.615686, 1 )
+margin_left = 140.0
+margin_top = 56.0
+margin_right = 164.0
+margin_bottom = 80.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton23" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.431373, 0.6, 0.792157, 1 )
+margin_left = 168.0
+margin_top = 56.0
+margin_right = 192.0
+margin_bottom = 80.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton24" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.470588, 0.564706, 0.509804, 1 )
+margin_left = 196.0
+margin_top = 56.0
+margin_right = 220.0
+margin_bottom = 80.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton25" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.843137, 0.772549, 0.603922, 1 )
+margin_top = 84.0
+margin_right = 24.0
+margin_bottom = 108.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton26" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.992157, 0.917647, 0.552941, 1 )
+margin_left = 28.0
+margin_top = 84.0
+margin_right = 52.0
+margin_bottom = 108.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton27" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 1, 0.686275, 0, 1 )
+margin_left = 56.0
+margin_top = 84.0
+margin_right = 80.0
+margin_bottom = 108.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton28" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.854902, 0.52549, 0.478431, 1 )
+margin_left = 84.0
+margin_top = 84.0
+margin_right = 108.0
+margin_bottom = 108.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton29" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.909804, 0.729412, 0.784314, 1 )
+margin_left = 112.0
+margin_top = 84.0
+margin_right = 136.0
+margin_bottom = 108.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton30" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.501961, 0.733333, 0.858824, 1 )
+margin_left = 140.0
+margin_top = 84.0
+margin_right = 164.0
+margin_bottom = 108.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton31" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.0705882, 0.933333, 0.831373, 1 )
+margin_left = 168.0
+margin_top = 84.0
+margin_right = 192.0
+margin_bottom = 108.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton32" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.631373, 0.768627, 0.54902, 1 )
+margin_left = 196.0
+margin_top = 84.0
+margin_right = 220.0
+margin_bottom = 108.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton33" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 1, 0.8, 0.6, 1 )
+margin_top = 112.0
+margin_right = 24.0
+margin_bottom = 136.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton34" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 1, 1, 0.8, 1 )
+margin_left = 28.0
+margin_top = 112.0
+margin_right = 52.0
+margin_bottom = 136.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton35" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 1, 0.788235, 0.788235, 1 )
+margin_left = 56.0
+margin_top = 112.0
+margin_right = 80.0
+margin_bottom = 136.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton36" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 1, 0.4, 0.8, 1 )
+margin_left = 84.0
+margin_top = 112.0
+margin_right = 108.0
+margin_bottom = 136.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton37" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.694118, 0.654902, 1, 1 )
+margin_left = 112.0
+margin_top = 112.0
+margin_right = 136.0
+margin_bottom = 136.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton38" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.686275, 0.866667, 1, 1 )
+margin_left = 140.0
+margin_top = 112.0
+margin_right = 164.0
+margin_bottom = 136.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton39" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.623529, 0.952941, 0.913725, 1 )
+margin_left = 168.0
+margin_top = 112.0
+margin_right = 192.0
+margin_bottom = 136.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton40" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.8, 1, 0.8, 1 )
+margin_left = 196.0
+margin_top = 112.0
+margin_right = 220.0
+margin_bottom = 136.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton41" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.756863, 0.745098, 0.258824, 1 )
+margin_top = 140.0
+margin_right = 24.0
+margin_bottom = 164.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton42" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 1, 1, 0, 1 )
+margin_left = 28.0
+margin_top = 140.0
+margin_right = 52.0
+margin_bottom = 164.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton44" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 1, 0.686275, 0, 1 )
+margin_left = 56.0
+margin_top = 140.0
+margin_right = 80.0
+margin_bottom = 164.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton45" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 1, 0, 0, 1 )
+margin_left = 84.0
+margin_top = 140.0
+margin_right = 108.0
+margin_bottom = 164.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton46" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 1, 0, 0.74902, 1 )
+margin_left = 112.0
+margin_top = 140.0
+margin_right = 136.0
+margin_bottom = 164.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton47" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0, 0, 1, 1 )
+margin_left = 140.0
+margin_top = 140.0
+margin_right = 164.0
+margin_bottom = 164.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton48" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0, 1, 1, 1 )
+margin_left = 168.0
+margin_top = 140.0
+margin_right = 192.0
+margin_bottom = 164.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton49" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0, 1, 0, 1 )
+margin_left = 196.0
+margin_top = 140.0
+margin_right = 220.0
+margin_bottom = 164.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton43" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.486275, 0.360784, 0.27451, 1 )
+margin_top = 168.0
+margin_right = 24.0
+margin_bottom = 192.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton50" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.8, 0.556863, 0.411765, 1 )
+margin_left = 28.0
+margin_top = 168.0
+margin_right = 52.0
+margin_bottom = 192.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton51" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.627451, 0.372549, 0.207843, 1 )
+margin_left = 56.0
+margin_top = 168.0
+margin_right = 80.0
+margin_bottom = 192.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton52" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.384314, 0.145098, 0.819608, 1 )
+margin_left = 84.0
+margin_top = 168.0
+margin_right = 108.0
+margin_bottom = 192.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton53" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.705882, 0.501961, 1, 1 )
+margin_left = 112.0
+margin_top = 168.0
+margin_right = 136.0
+margin_bottom = 192.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton54" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.0156863, 0.686275, 0.92549, 1 )
+margin_left = 140.0
+margin_top = 168.0
+margin_right = 164.0
+margin_bottom = 192.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton55" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.705882, 0.823529, 0.894118, 1 )
+margin_left = 168.0
+margin_top = 168.0
+margin_right = 192.0
+margin_bottom = 192.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton56" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.227451, 0.490196, 0.0823529, 1 )
+margin_left = 196.0
+margin_top = 168.0
+margin_right = 220.0
+margin_bottom = 192.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton57" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.411765, 0.25098, 0.156863, 1 )
+margin_top = 196.0
+margin_right = 24.0
+margin_bottom = 220.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton58" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.666667, 0.333333, 0, 1 )
+margin_left = 28.0
+margin_top = 196.0
+margin_right = 52.0
+margin_bottom = 220.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton59" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.639216, 0.294118, 0.294118, 1 )
+margin_left = 56.0
+margin_top = 196.0
+margin_right = 80.0
+margin_bottom = 220.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton60" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.666667, 0, 0.666667, 1 )
+margin_left = 84.0
+margin_top = 196.0
+margin_right = 108.0
+margin_bottom = 220.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton61" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.129412, 0.329412, 0.72549, 1 )
+margin_left = 112.0
+margin_top = 196.0
+margin_right = 136.0
+margin_bottom = 220.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton62" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0, 0.12549, 0.376471, 1 )
+margin_left = 140.0
+margin_top = 196.0
+margin_right = 164.0
+margin_bottom = 220.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton63" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.156863, 0.498039, 0.278431, 1 )
+margin_left = 168.0
+margin_top = 196.0
+margin_right = 192.0
+margin_bottom = 220.0
+texture_normal = ExtResource( 9 )
+
+[node name="TextureButton64" type="TextureButton" parent="Backpack/BuildTools/ColorRect4/GridContainer"]
+modulate = Color( 0.156863, 0.498039, 0.278431, 1 )
+margin_left = 196.0
+margin_top = 196.0
+margin_right = 220.0
+margin_bottom = 220.0
+texture_normal = ExtResource( 9 )
+
+[node name="AddP" type="AudioStreamPlayer" parent="Backpack/BuildTools"]
+stream = ExtResource( 10 )
+
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton13" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton14" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton15" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton16" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton17" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton18" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton19" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton20" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton21" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton22" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton23" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton24" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton25" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton26" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton27" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton28" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton29" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton30" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton31" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton32" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton33" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton34" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton35" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton36" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton37" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton38" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton39" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton40" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton41" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton42" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton44" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton45" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton46" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton47" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton48" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton49" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton43" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton50" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]
+[connection signal="pressed" from="Backpack/BuildTools/ColorRect4/GridContainer/TextureButton51" to="Backpack/BuildTools" method="_on_TextureButton_pressed"]

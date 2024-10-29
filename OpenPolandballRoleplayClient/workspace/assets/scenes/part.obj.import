@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/part.obj-6fa900956f83315ebab72dbd899a8806.mesh"
+
+[deps]
+
+files=[ "res://.import/part.obj-6fa900956f83315ebab72dbd899a8806.mesh" ]
+
+source_file="res://workspace/assets/scenes/part.obj"
+dest_files=[ "res://.import/part.obj-6fa900956f83315ebab72dbd899a8806.mesh", "res://.import/part.obj-6fa900956f83315ebab72dbd899a8806.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true

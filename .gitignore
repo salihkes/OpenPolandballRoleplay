@@ -1,0 +1,64 @@
+# Godot-specific ignores
+.import/
+export.cfg
+export_presets.cfg
+*.translation
+.mono/
+data_*/
+
+# Server-specific ignores
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+cert1.crt
+key1.key
+perm_bans.json
+users/
+
+# Game-specific
+builds/
+logs/
+*.pck
+*.exe
+*.x86_64
+*.app
+user://
+flags/
+flags/*
+!flags/README.md
+mapparts/*.json
+
+# System/IDE specific
+.DS_Store
+*~
+*.sw[a-p]
+.idea/
+.vscode/
+*.tmp
+*.bak
+
+# Dependencies
+addons/*
+!addons/godot-openvr/
+!addons/cloud/
+
+# User specific
+user://
+*.save

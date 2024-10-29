@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/partglossy.obj-68e0339e408e960eba4818071a424545.mesh"
+
+[deps]
+
+files=[ "res://.import/partglossy.obj-68e0339e408e960eba4818071a424545.mesh" ]
+
+source_file="res://workspace/assets/scenes/partglossy.obj"
+dest_files=[ "res://.import/partglossy.obj-68e0339e408e960eba4818071a424545.mesh", "res://.import/partglossy.obj-68e0339e408e960eba4818071a424545.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true
