@@ -33,7 +33,6 @@ data_*/
 # Build artifacts
 *.o
 *.os
-*.obj
 *.bc
 
 # Dependencies
