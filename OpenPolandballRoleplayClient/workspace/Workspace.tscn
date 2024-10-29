@@ -1394,11 +1394,24 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -468.0
 margin_top = -68.0
-margin_right = -42.0
+margin_right = -251.0
 margin_bottom = -33.0
 custom_fonts/font = ExtResource( 12 )
 custom_styles/normal = SubResource( 92 )
 text = "Play"
+
+[node name="RegisterButton" type="Button" parent="LoginUI"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -247.0
+margin_top = -68.0
+margin_right = -42.0
+margin_bottom = -33.0
+custom_fonts/font = ExtResource( 12 )
+custom_styles/normal = SubResource( 92 )
+text = "Register"
 
 [node name="CountryInput" type="LineEdit" parent="LoginUI"]
 anchor_left = 1.0
@@ -1407,11 +1420,24 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -468.0
 margin_top = -97.0
-margin_right = -42.0
+margin_right = -251.0
 margin_bottom = -72.0
 custom_fonts/font = ExtResource( 2 )
 custom_styles/normal = SubResource( 91 )
 placeholder_text = "Country (TAG_Ideology)"
+
+[node name="InviteInput" type="LineEdit" parent="LoginUI"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -247.0
+margin_top = -97.0
+margin_right = -42.0
+margin_bottom = -72.0
+custom_fonts/font = ExtResource( 2 )
+custom_styles/normal = SubResource( 91 )
+placeholder_text = "Invitation Code"
 
 [node name="TextureRect" type="TextureRect" parent="LoginUI"]
 anchor_left = 1.0
@@ -1489,3 +1515,4 @@ environment = ExtResource( 9 )
 [connection signal="pressed" from="PlayerGUI/TextureRect/EmotionWheel/TextureRect3/Angry" to="." method="_on_Angry_pressed"]
 [connection signal="pressed" from="PlayerGUI/TextureRect/EmotionWheel/TextureRect4/Sad" to="." method="_on_Sad_pressed"]
 [connection signal="pressed" from="LoginUI/PlayButton" to="." method="_on_PlayButton_pressed"]
+[connection signal="pressed" from="LoginUI/RegisterButton" to="." method="_on_RegisterButton_pressed"]

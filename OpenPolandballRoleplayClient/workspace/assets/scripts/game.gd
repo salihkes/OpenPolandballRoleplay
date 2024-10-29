@@ -761,3 +761,57 @@ func _on_button_pressed():
 		"map_name": current_map_name,
 		"username": get_node("/root/s1sd").get("username")
 	})
+
+
+func _on_RegisterButton_pressed():
+	var username_field = $LoginUI/UsernameInput
+	var password_field = $LoginUI/PasswordInput
+	var invite_field = $LoginUI/InviteInput  # You'll need to add this to your scene
+	
+	# Ensure all required fields are provided
+	if username_field.text.strip_edges() != "" and password_field.text.strip_edges() != "":
+		# Send registration request to server
+		websocket_client = WebSocketClient.new()
+		websocket_client.connect("connection_established", self, "_on_register_websocket_connected")
+		websocket_client.connect("data_received", self, "_on_register_websocket_data_received")
+		websocket_client.connect("connection_closed", self, "_on_register_websocket_disconnected")
+		websocket_client.verify_ssl = false
+		websocket_client.connect_to_url("wss://skeskin.com:8765")  # Use same URL as login
+	else:
+		# Show an error message if fields are empty
+		print("Please fill in all required fields")
+		# Optionally display this error in the UI
+		# $LoginUI/ErrorLabel.text = "Please fill in all required fields"
+
+func _on_register_websocket_connected(protocols):
+	print("Connected to registration server")
+	
+	var username = $LoginUI/UsernameInput.text.strip_edges()
+	var password = $LoginUI/PasswordInput.text.strip_edges()
+	var invite_code = $LoginUI/InviteInput.text.strip_edges()
+	
+	send_websocket_message({
+		"action": "register",
+		"username": username,
+		"password": password,
+		"Invite": invite_code
+	})
+
+func _on_register_websocket_data_received():
+	var message = websocket_client.get_peer(1).get_packet().get_string_from_utf8()
+	var data = JSON.parse(message).result
+	
+	match data["action"]:
+		"register_success":
+			print("Registration successful")
+			# Optionally show success message in UI
+			# $LoginUI/ErrorLabel.text = "Registration successful! You can now login."
+			websocket_client.disconnect_from_host()
+		"register_failed":
+			print("Registration failed: %s" % data["reason"])
+			# Show error message in UI
+			# $LoginUI/ErrorLabel.text = "Registration failed: " + data["reason"]
+			websocket_client.disconnect_from_host()
+
+func _on_register_websocket_disconnected(code, reason, was_clean):
+	print("Disconnected from registration server")
