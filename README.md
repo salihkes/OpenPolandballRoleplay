@@ -35,6 +35,10 @@ This version seeks to become a free and open-source alternative of traditional P
 
 ## 🚀 Getting Started
 
+### Important Notes
+- **Code Structure**: IMPORTANT: Code is currently unstructured. It was originally written in 2021, then rewritten in 2022 in C#, then modified with LLM, then translated back into GDScript in 2023 and "simplified" (not really) in 2024. A specific convention and style will be followed and the code will be modified for it soon.
+- **Map Availability**: An in-game map (except a baseplate) is not provided at the present. The script before the simplification supported custom maps loaded at runtime, but I may have removed this feature. Will soon be added back during code restructuring.
+
 ### Prerequisites
 - Godot Engine 3.x
 - Python 3.8+ (for server. Miniconda installation recommended.)
