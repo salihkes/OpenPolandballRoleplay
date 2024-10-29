@@ -13,7 +13,7 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	var time = self.get_parent().get_parent().get_parent().get_parent().get("timeval")
+	var time = self.get_parent().get_parent().get_parent().get_parent().get("time_val")
 	if time > 6 and time < 17:
 		self.light_energy = 0.5
 	elif time == 7 or time == 18:

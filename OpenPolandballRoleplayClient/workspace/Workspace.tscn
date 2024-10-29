@@ -1433,7 +1433,7 @@ environment = ExtResource( 9 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 reset_on_save = false
-playback_speed = 0.5
+playback_speed = 24.0
 anims/RESET = SubResource( 80 )
 anims/ShadersNew = SubResource( 81 )
 

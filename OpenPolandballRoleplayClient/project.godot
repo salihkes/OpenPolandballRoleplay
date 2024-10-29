@@ -13,15 +13,23 @@ _global_script_classes=[ {
 "class": "CloudDome",
 "language": "GDScript",
 "path": "res://addons/cloud/Cloud.gd"
+}, {
+"base": "Resource",
+"class": "TerrainGenerator",
+"language": "GDScript",
+"path": "res://workspace/assets/scripts/TerrainGenerator.gd"
 } ]
 _global_script_class_icons={
-"CloudDome": ""
+"CloudDome": "",
+"TerrainGenerator": ""
 }
 
 [application]
 
 config/name="OpenPolandballRoleplay"
 run/main_scene="res://workspace/Workspace.tscn"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="OpenPBRP"
 config/icon="res://icon.png"
 
 [autoload]

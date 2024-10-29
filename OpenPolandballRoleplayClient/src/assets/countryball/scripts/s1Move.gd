@@ -1,102 +1,168 @@
+# Player movement and interaction controller for OpenPolandballRoleplay
+# 
+# This script manages player-specific functionality including:
+# - Local and remote player movement
+# - Camera control and perspective
+# - Noclip mode toggling
+# - Animation state management
+# - Network position synchronization
+# - Player customization (accessories, emotions)
+# - Flag texture application
+# - Player identification
+#
+# The script handles both local player input processing and
+# remote player state updates received from the server.
+
 extends KinematicBody
 
-var username = ""
-var InputVector = Vector3()
-var Velocity = Vector3()
-var VerticalVelocity = 0.0
-var JumpMagnitude = 10.0
-var Gravity = 85.0
-var AngularAcceleration = 7
-var noclipMode = false
-var current_emotion = "neutral"
-var animationPlayer
-var current_accessories
-var accessories_to_send
-var prevaccessories
+# Player identification and state
+var username: String = ""
+var current_emotion: String = "neutral"
+var noclip_mode: bool = false
 
-func _ready():
-	animationPlayer = $AnimationPlayer
+# Movement variables
+var input_vec: Vector3 = Vector3()
+var velocity: Vector3 = Vector3()
+var vert_velocity: float = 0.0
 
-func _physics_process(delta):
-	# Only process input for the local player
-	if username == str(get_tree().root.get_node("s1sd").get("username")):
-		self.get_tree().root.get_node("game").prevcam = $Camroot/h/v/ARVROrigin/ARVRCamera
-		var HRot = $Camroot/h.global_transform.basis.get_euler().y
-		InputVector = Vector3(
-			Input.get_action_strength("right") - Input.get_action_strength("left"), 
-			0, 
-			Input.get_action_strength("down") - Input.get_action_strength("up")
-		).rotated(Vector3.UP, HRot)
+# Accessory variables
+var current_accessories: Array = []
+var prevaccessories = null
 
-		if Input.is_action_pressed("down") or Input.is_action_pressed("up") or Input.is_action_pressed("left") or Input.is_action_pressed("right"):
-			$Pivot.rotation.y = lerp_angle($Pivot.rotation.y, atan2(-InputVector.x, -InputVector.z), delta * AngularAcceleration)
+# Movement constants
+const JUMP_FORCE: float = 10.0
+const GRAVITY: float = 85.0
+const ANGULAR_ACCEL: float = 7.0
 
-		# Noclip mode movement (free movement without gravity or collision)
-		if noclipMode:
-			Velocity = InputVector
-			# Free movement in the direction of the camera
-			Velocity.y = Input.get_action_strength("noclip_up") - Input.get_action_strength("noclip_down")  # Allows vertical movement (e.g., noclip_up to ascend, noclip_down to descend)
-			translate(Velocity * delta * 10)  # Adjust speed as needed
+# Node references
+var anim_player: AnimationPlayer
+var accessories_node: Node
 
-			# Play animations
-			if InputVector == Vector3():
-				animationPlayer.play("Idle")
-			else:
-				animationPlayer.play("Walk")
-		else:
-			# Regular movement with gravity
-			Velocity = InputVector
-			move_and_slide(Velocity + Vector3.UP * VerticalVelocity, Vector3.UP)
+func _ready() -> void:
+	anim_player = $AnimationPlayer
+	accessories_node = $Pivot/Accessory
 
-			if InputVector == Vector3():
-				animationPlayer.play("Idle")
-			else:
-				animationPlayer.play("Walk")
+func _physics_process(delta: float) -> void:
+	if not _is_local_player():
+		return
+		
+	_update_camera()
+	_handle_movement(delta)
+	_sync_multiplayer()
 
-			# Gravity handling
-			if not is_on_floor():
-				VerticalVelocity -= Gravity * delta
-			else:
-				VerticalVelocity = 0.0
-			if is_on_floor() and Input.is_action_pressed("Jump"):
-				VerticalVelocity = JumpMagnitude
+func _is_local_player() -> bool:
+	return username == str(
+		get_tree().root.get_node("s1sd").get("username")
+	)
 
-		# Multiplayer sync - Send updates to the server
-		if current_accessories != null:
-			accessories_to_send = current_accessories.slice(0, 3)  # Limit to 3 accessories
+func _update_camera() -> void:
+	var game_node = self.get_tree().root.get_node("game")
+	game_node.prev_cam = $Camroot/h/v/ARVROrigin/ARVRCamera
 
-		get_node("/root/game").send_websocket_message({
-			"action": "update_player",
-			"username": username,
-			"transform": global_transform,
-			"InputVector": InputVector,
-			"rotation": {
-				"x": $Pivot.rotation.x,
-				"y": $Pivot.rotation.y,
-				"z": $Pivot.rotation.z
-			},
-			"emotion": current_emotion,  # Pass the player's current emotion state
-			"accessories": accessories_to_send  # Send the processed accessories
-		})
+func _handle_movement(delta: float) -> void:
+	var h_rot = $Camroot/h.global_transform.basis.get_euler().y
+	
+	# Calculate input vector based on current heading
+	input_vec = Vector3(
+		Input.get_action_strength("right") - 
+			Input.get_action_strength("left"),
+		0,
+		Input.get_action_strength("down") - 
+			Input.get_action_strength("up")
+	).rotated(Vector3.UP, h_rot)
 
-func enable_noclip():
-	noclipMode = true
-	VerticalVelocity = 0.0  # Reset vertical velocity when entering noclip
-
-func disable_noclip():
-	noclipMode = false
-
-func update_player(tr, input_vector, rotation):
-	global_transform = tr
-	$Pivot.rotation = Vector3(rotation["x"], rotation["y"], rotation["z"])
-	InputVector = input_vector
-
-	# Apply movement animations
-	if InputVector == Vector3():
-		animationPlayer.play("Idle")
+	_update_rotation(delta)
+	
+	if noclip_mode:
+		_handle_noclip_movement(delta)
 	else:
-		animationPlayer.play("Walk")
+		_handle_normal_movement(delta)
+	
+	_update_animation()
 
+func _update_rotation(delta: float) -> void:
+	if _has_movement_input():
+		$Pivot.rotation.y = lerp_angle(
+			$Pivot.rotation.y,
+			atan2(-input_vec.x, -input_vec.z),
+			delta * ANGULAR_ACCEL
+		)
+
+func _has_movement_input() -> bool:
+	return (
+		Input.is_action_pressed("down") or
+		Input.is_action_pressed("up") or
+		Input.is_action_pressed("left") or
+		Input.is_action_pressed("right")
+	)
+
+func _handle_noclip_movement(delta: float) -> void:
+	velocity = input_vec
+	velocity.y = (
+		Input.get_action_strength("noclip_up") - 
+		Input.get_action_strength("noclip_down")
+	)
+	translate(velocity * delta * 10)
+
+func _handle_normal_movement(delta: float) -> void:
+	velocity = input_vec
+	
+	# Apply gravity and handle jumping
+	if not is_on_floor():
+		vert_velocity -= GRAVITY * delta
+	else:
+		vert_velocity = 0.0
+		if Input.is_action_pressed("Jump"):
+			vert_velocity = JUMP_FORCE
+			
+	move_and_slide(
+		velocity + Vector3.UP * vert_velocity, 
+		Vector3.UP
+	)
+
+func _update_animation() -> void:
+	var anim_name = "Idle" if input_vec == Vector3() else "Walk"
+	anim_player.play(anim_name)
+
+func _sync_multiplayer() -> void:
+	get_node("/root/game").send_websocket_message({
+		"action": "update_player",
+		"username": username,
+		"transform": global_transform,
+		"InputVector": input_vec,
+		"rotation": {
+			"x": $Pivot.rotation.x,
+			"y": $Pivot.rotation.y,
+			"z": $Pivot.rotation.z
+		},
+		"emotion": current_emotion,
+		"accessories": current_accessories
+	})
+
+# Noclip mode controls
+func enable_noclip() -> void:
+	noclip_mode = true
+	vert_velocity = 0.0
+
+func disable_noclip() -> void:
+	noclip_mode = false
+
+# Remote player update handling
+func update_player(
+	tr: Transform, 
+	input_vector: Vector3, 
+	rotation: Dictionary
+) -> void:
+	global_transform = tr
+	$Pivot.rotation = Vector3(
+		rotation["x"], 
+		rotation["y"], 
+		rotation["z"]
+	)
+	input_vec = input_vector
+	_update_animation()
+
+# Accessory management
 func apply_accessories(accessories):
 	if accessories != prevaccessories:
 		prevaccessories = accessories
@@ -112,32 +178,30 @@ func apply_accessories(accessories):
 			
 			if accessory_scene:
 				var accessory_instance = accessory_scene.instance()
-				
-				# Attach the accessory to the appropriate node (assuming $Accessories is a node under your player)
 				self.get_node("Pivot/Accessory").add_child(accessory_instance)
-				# Positioning logic (e.g., head, hand) can be applied here if necessary
 				print("Accessory '%s' applied to player" % accessory_name)
 			else:
 				print("Failed to load accessory: %s" % accessory_name)
 
-
-func apply_flag(flag_data):
-	# Decode the base64 string to a PoolByteArray
+# Flag texture handling
+func apply_flag(flag_data: String) -> void:
+	if flag_data.empty():
+		return
+		
 	var byte_array = Marshalls.base64_to_raw(flag_data)
-
-	# Load the flag texture from the received flag data
 	var image = Image.new()
-	var error = image.load_png_from_buffer(byte_array)
 	
-	if error != OK:
-		print("Failed to load PNG from buffer with error code: ", error)
+	if image.load_png_from_buffer(byte_array) != OK:
+		push_warning("Failed to load flag PNG from buffer")
 		return
 
 	var texture = ImageTexture.new()
 	texture.create_from_image(image)
 	
-	var original_mat = $Pivot/Skin/Armature/Skeleton/Cube.get_surface_material(0)
-	if original_mat is SpatialMaterial:
-		var new_mat = original_mat.duplicate()
+	var cube = $Pivot/Skin/Armature/Skeleton/Cube
+	var orig_mat = cube.get_surface_material(0)
+	
+	if orig_mat is SpatialMaterial:
+		var new_mat = orig_mat.duplicate()
 		new_mat.albedo_texture = texture
-		$Pivot/Skin/Armature/Skeleton/Cube.set_surface_material(0, new_mat)
+		cube.set_surface_material(0, new_mat)
