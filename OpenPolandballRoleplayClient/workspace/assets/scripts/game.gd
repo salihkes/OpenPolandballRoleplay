@@ -48,11 +48,53 @@ var placed_parts = {}
 var received_pck_files = {}  # Dictionary to store received chunks
 var chunked_files = {}  # Tracks the chunks of each file
 
+# Add this variable near the top with other variables
+var is_chat_focused = false
+
+# Near the top with other variables
+var using_gles2 = false
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	# Check if using GLES2
+	using_gles2 = ProjectSettings.get_setting("rendering/quality/driver/driver_name") == "GLES2"
+	
+	# Load appropriate environment
+	var env_resource
+	if using_gles2:
+		env_resource = load("res://GLES2_env.tres")
+	else:
+		env_resource = load("res://src/assets/countryball/PCy.tres")
+	
+	# Create and apply WorldEnvironment if it doesn't exist
+	if not has_node("WorldEnvironment"):
+		var world_env = WorldEnvironment.new()
+		world_env.name = "WorldEnvironment"
+		add_child(world_env)
+	
+	# Apply environment to world
+	get_node("WorldEnvironment").environment = env_resource
+	
+	# Store the environment resource to apply to new players
+	s1sd.set("current_environment", env_resource)
+	
+	# Set up loading camera environment
+	var loading_camera = get_node("LoadingCamera")
+	var loading_env = WorldEnvironment.new()
+	loading_env.name = "LoadingEnvironment"
+	loading_env.environment = env_resource
+	loading_camera.add_child(loading_env)
+	
+	# Continue with rest of initialization
 	self.get_node("LoadingCamera").visible = true
 	self.get_node("LoadingCamera").current = true
-	current_time_hour = time_game
+	
+	# Set fixed time if using GLES2
+	if using_gles2:
+		current_time_hour = time_game
+	else:
+		current_time_hour = get_trt_time_as_number_with_dots()
+	
 	workspace = get_node("Workspace")
 	players = get_node("Players")
 
@@ -175,15 +217,22 @@ func _process(delta):
 
 
 func _input(event):
-	# Detect if the "send_chat" action is pressed
+	var line_edit = get_node("PlayerGUI/LineEdit")
+	
+	# Check if LineEdit gained or lost focus
+	if event is InputEventMouseButton:
+		if line_edit.has_focus():
+			is_chat_focused = true
+		else:
+			is_chat_focused = false
+	
+	# Handle chat send action
 	if event.is_action_pressed("send_chat"):
-		var line_edit = get_node("PlayerGUI/LineEdit")
-		var message = line_edit.text.strip_edges()
-
-		if message != "":
-			_on_chat_message_entered(message)
+		if line_edit.text.strip_edges() != "":
+			_on_chat_message_entered(line_edit.text.strip_edges())
 			line_edit.clear()
 			line_edit.release_focus()
+			is_chat_focused = false
 
 
 func _on_chat_message_entered(message):
@@ -394,6 +443,10 @@ func _handle_player_joined(player_data):
 		)
 		username_label.text = username
 		
+		# Apply the current environment
+		if player_instance.has_node("WorldEnvironment"):
+			player_instance.get_node("WorldEnvironment").environment = s1sd.get("current_environment")
+		
 		# Apply transform if valid, otherwise use default
 		var transform_str = player_data["transform"]
 		var parsed_transform = _parse_transform_string(transform_str)
@@ -582,28 +635,46 @@ func _update_time(hour: float):
 	if is_logged_in == true:
 		if prev_cam == null:
 			return
+		
+		# If using GLES2, keep time fixed at time_game
+		if using_gles2:
+			current_time_hour = time_game
+		else:
+			current_time_hour = hour
 			
-		current_time_hour = hour
 		var anim_player = get_node("AnimationPlayer")
-		anim_player.set_current_animation("ShadersNew")
-
-		if anim_player.current_animation_position >= current_time_hour:
-			is_time_set = true
-			anim_player.stop(false)
+		
+		# Only play animation if not using GLES2
+		if not using_gles2:
+			anim_player.set_current_animation("ShadersNew")
 			
+			if anim_player.current_animation_position >= current_time_hour:
+				is_time_set = true
+				anim_player.stop(false)
+				
+				prev_cam.current = true
+				$LoadingUI.visible = false
+				$PlayerGUI.visible = true
+			else:
+				anim_player.play("ShadersNew")
+		else:
+			# For GLES2, skip animation and set UI directly
+			is_time_set = true
 			prev_cam.current = true
 			$LoadingUI.visible = false
 			$PlayerGUI.visible = true
-		else:
-			anim_player.play("ShadersNew")
 
-		get_node("Sky_texture").call("set_time_of_day", current_time_hour, get_node("DirectionalLight"), deg2rad(horizontal_angle))
-		_set_sky_rotation()
+		# Update sky and lighting
+		if not using_gles2:
+			get_node("Sky_texture").call("set_time_of_day", current_time_hour, get_node("DirectionalLight"), deg2rad(horizontal_angle))
+			_set_sky_rotation()
+		
 		self.get_node("LoadingCamera").visible = false
 
 		var directional_light = get_node("DirectionalLight")
 		var directional_light_night = get_node("DirectionalLightNight")
 
+		# Update lighting based on time
 		if current_time_hour >= 19 or current_time_hour < 6:
 			directional_light.visible = false
 			directional_light_night.visible = true
@@ -614,18 +685,25 @@ func _update_time(hour: float):
 			directional_light.visible = false
 			directional_light_night.visible = false
 	else:
-		current_time_hour = hour
-		var anim_player = get_node("AnimationPlayer")
-		anim_player.set_current_animation("ShadersNew")
-
-		if anim_player.current_animation_position >= current_time_hour - 1:
-			anim_player.stop(false)
+		# Login screen time handling
+		if using_gles2:
+			current_time_hour = time_game
 		else:
-			_on_sky_texture_sky_updated()
-			anim_player.play("ShadersNew")
+			current_time_hour = hour
+			
+		var anim_player = get_node("AnimationPlayer")
+		
+		if not using_gles2:
+			anim_player.set_current_animation("ShadersNew")
+			
+			if anim_player.current_animation_position >= current_time_hour - 1:
+				anim_player.stop(false)
+			else:
+				_on_sky_texture_sky_updated()
+				anim_player.play("ShadersNew")
 
-		get_node("Sky_texture").call("set_time_of_day", anim_player.current_animation_position, get_node("DirectionalLight"), deg2rad(horizontal_angle))
-		_set_sky_rotation()
+			get_node("Sky_texture").call("set_time_of_day", anim_player.current_animation_position, get_node("DirectionalLight"), deg2rad(horizontal_angle))
+			_set_sky_rotation()
 
 		var directional_light = get_node("DirectionalLight")
 		var directional_light_night = get_node("DirectionalLightNight")
@@ -637,8 +715,8 @@ func _update_time(hour: float):
 			directional_light.visible = true
 			directional_light_night.visible = false
 		else:
-				directional_light.visible = false
-				directional_light_night.visible = false
+			directional_light.visible = false
+			directional_light_night.visible = false
 
 # UI Handling Functions
 
@@ -681,28 +759,36 @@ func _on_PlayButton_pressed():
 
 func _on_TextureButton_pressed():
 	var line_edit = get_node("PlayerGUI/LineEdit")
-	var message = line_edit.text.strip_edges()
-
-	if message != "":
-		_on_chat_message_entered(message)
+	if line_edit.text.strip_edges() != "":
+		_on_chat_message_entered(line_edit.text.strip_edges())
 		line_edit.clear()
 		line_edit.release_focus()
+	# Release button focus after handling
+	get_node("PlayerGUI/TextureRect/TextureButton").release_focus()
 
 
 func _on_TextureButton2_pressed():
 	$PlayerGUI/ColorRect.visible = !$PlayerGUI/ColorRect.visible
+	# Release button focus after handling
+	get_node("PlayerGUI/TextureRect/TextureButton2").release_focus()
 
 
 func _on_TextureButton3_pressed():
 	$PlayerGUI/ColorRect3.visible = !$PlayerGUI/ColorRect3.visible
+	# Release button focus after handling
+	get_node("PlayerGUI/TextureRect/TextureButton3").release_focus()
 
 
 func _on_TextureButton4_pressed():
 	$PlayerGUI/ColorRect4.visible = !$PlayerGUI/ColorRect4.visible
+	# Release button focus after handling
+	get_node("PlayerGUI/TextureRect/TextureButton4").release_focus()
 
 
 func _on_TextureButton5_pressed():
 	self.get_node("PlayerGUI/TextureRect/EmotionWheel").visible = !self.get_node("PlayerGUI/TextureRect/EmotionWheel").visible
+	# Release button focus after handling
+	get_node("PlayerGUI/TextureRect/TextureButton5").release_focus()
 
 
 func _on_Neutral_pressed():

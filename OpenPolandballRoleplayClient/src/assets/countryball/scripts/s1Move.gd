@@ -43,12 +43,20 @@ func _ready() -> void:
 	accessories_node = $Pivot/Accessory
 
 func _physics_process(delta: float) -> void:
-	if not _is_local_player():
-		return
+	# Get reference to game node to check chat focus
+	var game = get_node("/root/game")
+	
+	# Only process movement if chat is not focused
+	if not game.is_chat_focused:
+		if not _is_local_player():
+			return
 		
-	_update_camera()
-	_handle_movement(delta)
-	_sync_multiplayer()
+		_update_camera()
+		_handle_movement(delta)
+		_sync_multiplayer()
+	else:
+		# Reset input vector when chat is focused
+		input_vec = Vector3.ZERO
 
 func _is_local_player() -> bool:
 	return username == str(

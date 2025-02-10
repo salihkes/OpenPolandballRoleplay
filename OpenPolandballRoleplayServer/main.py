@@ -39,6 +39,11 @@ if os.path.exists(PERMBANS_FILE):
 else:
     perm_banned_users = {}
 
+USERS_FOLDER = "users"  # Folder containing user files
+
+# Create users directory if it doesn't exist
+os.makedirs(USERS_FOLDER, exist_ok=True)
+
 async def send_pck_files(username, websocket):
     """Send the name of the .pck file from the mapparts folder to the client."""
     mapparts_folder = "mapparts"
@@ -53,7 +58,7 @@ async def send_pck_files(username, websocket):
                 print(f"Sent {file_name} to {username}")
                 break  # Stop after sending the first .pck file name (remove if you want to send multiple names)
 
-async def handler(websocket, path):
+async def handler(websocket):
     username = None
 
     try:
@@ -150,32 +155,41 @@ async def handler(websocket, path):
                     await websocket.send(json.dumps({"action": "register_failed", "reason": "Missing username or password"}))
                     break
 
+                # Sanitize username to prevent directory traversal
+                if "/" in username or "\\" in username:
+                    await websocket.send(json.dumps({"action": "register_failed", "reason": "Invalid username"}))
+                    break
+
                 # Check if user already exists
                 user_file_path = os.path.join(USERS_FOLDER, f"{username}.json")
                 if os.path.exists(user_file_path):
                     await websocket.send(json.dumps({"action": "register_failed", "reason": "Username already taken"}))
                     break
 
-                # Validate invite code (optional, implement your own logic)
+                # Validate invite code
                 if not validate_invite_code(invite_code):
                     await websocket.send(json.dumps({"action": "register_failed", "reason": "Invalid invite code"}))
                     break
 
-                # Create a new user
-                salt = uuid.uuid4().hex
-                hashed_password = hash_password(password, salt)
+                try:
+                    # Create a new user
+                    salt = uuid.uuid4().hex
+                    hashed_password = hash_password(password, salt)
 
-                user_data = {
-                    "hashed_password": hashed_password,
-                    "salt": salt
-                }
+                    user_data = {
+                        "hashed_password": hashed_password,
+                        "salt": salt
+                    }
 
-                # Save the user data to a file
-                with open(user_file_path, "w") as user_file:
-                    json.dump(user_data, user_file)
+                    # Save the user data to a file
+                    with open(user_file_path, "w") as user_file:
+                        json.dump(user_data, user_file)
 
-                await websocket.send(json.dumps({"action": "register_success"}))
-                print(f"User {username} registered successfully.")
+                    await websocket.send(json.dumps({"action": "register_success"}))
+                    print(f"User {username} registered successfully.")
+                except Exception as e:
+                    print(f"Error registering user: {e}")
+                    await websocket.send(json.dumps({"action": "register_failed", "reason": "Server error during registration"}))
             
             elif action == "place_part":
                 part_data = {
@@ -297,6 +311,56 @@ async def handler(websocket, path):
 
             elif action == "send_chat":
                 message = data.get("message")
+
+                # Handle flag change command
+                if message.startswith("!flag "):
+                    new_flag = message.split()[1]  # Get the flag name after "!flag "
+                    
+                    # Block username-based flags
+                    if new_flag in user_table or new_flag in connected_clients:
+                        await websocket.send(json.dumps({
+                            "action": "receive_chat",
+                            "username": "Server",
+                            "message": f"Cannot use username '{new_flag}' as a flag"
+                        }))
+                        continue  # Use continue instead of return
+                    
+                    # Convert the TGA flag to PNG and store the base64-encoded data
+                    try:
+                        flag_filename = f"{new_flag}.TGA"
+                        png_data = await convert_tga_to_png(os.path.join(FLAGS_FOLDER, flag_filename))
+                        if png_data:
+                            encoded_flag_data = base64.b64encode(png_data).decode('utf-8')
+                            # Update the player's flag data
+                            if username in player_states:
+                                player_states[username]["flag_data"] = encoded_flag_data
+                                # Broadcast the flag update to all clients
+                                await broadcast({
+                                    "action": "receive_flag",
+                                    "username": username,
+                                    "flag_data": encoded_flag_data
+                                })
+                                await broadcast({
+                                    "action": "receive_chat",
+                                    "username": username,
+                                    "message": f"Changed flag to {new_flag}"
+                                })
+                                continue  # Use continue instead of return
+                        else:
+                            await websocket.send(json.dumps({
+                                "action": "receive_chat",
+                                "username": "Server",
+                                "message": f"Flag '{new_flag}' not found"
+                            }))
+                            continue  # Use continue instead of return
+                    except Exception as e:
+                        print(f"Error changing flag: {e}")
+                        await websocket.send(json.dumps({
+                            "action": "receive_chat",
+                            "username": "Server",
+                            "message": "Error changing flag"
+                        }))
+                        continue  # Use continue instead of return
 
                 # Handle ban commands from admins
                 if username in admins:
@@ -444,9 +508,6 @@ def is_duplicate(part_data):
         ):
             return True
     return False
-
-USERS_FOLDER = "users"  # Folder containing user files
-
 
 # Load SSL context
 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)

@@ -8,7 +8,7 @@
 [ext_resource path="res://addons/Sky/sky_texture.tscn" type="PackedScene" id=6]
 [ext_resource path="res://addons/cloud/Cloud.gd" type="Script" id=7]
 [ext_resource path="res://addons/cloud/CageMesh.tres" type="ArrayMesh" id=8]
-[ext_resource path="res://src/assets/countryball/PCy.tres" type="Environment" id=9]
+[ext_resource path="res://GLES2_env.tres" type="Environment" id=9]
 [ext_resource path="res://workspace/assets/scenes/Part.tscn" type="PackedScene" id=10]
 [ext_resource path="res://workspace/assets/scripts/PlacementTool.gd" type="Script" id=11]
 [ext_resource path="res://src/assets/fonts/BoldStandart.tres" type="DynamicFont" id=12]
@@ -1462,7 +1462,6 @@ anims/RESET = SubResource( 80 )
 anims/ShadersNew = SubResource( 81 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = ExtResource( 9 )
 
 [connection signal="sky_updated" from="Sky_texture" to="." method="_on_Sky_texture_sky_updated"]
 [connection signal="pressed" from="PlayerGUI/ColorRect2/HBoxContainer/Button" to="." method="_on_Button_pressed"]

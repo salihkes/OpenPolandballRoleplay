@@ -8,6 +8,7 @@ var ip_address = "localhost"
 var port = 8765
 var commandtosend = null
 var mapload = ""
+var current_environment = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -30,3 +31,6 @@ func set_map(map):
 
 func set_port(prt):
 	port = prt
+
+func set_current_environment(env):
+	current_environment = env
